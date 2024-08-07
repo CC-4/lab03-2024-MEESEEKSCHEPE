@@ -86,36 +86,37 @@ SEMI = ";" // Definan aqui sus Tokens/ER por ejemplo: "el token SEMI"
 WHITE = [" "|\t|\n]
 DIGITOS = [0-9]
 SIGNO = [+-]
-PUNTO = .
+PUNTO = "."
 EXPONENTE = [eE]
 
 
 %%
 
+<YYINITIAL>{SEMI}   { return new Token(Token.SEMI);   }
+
+<YYINITIAL>{WHITE}  { /* NO HACER NADA */             }
+
+<YYINITIAL>"+"   { return new Token(Token.PLUS);   }
+
+<YYINITIAL>"-"   { return new Token(Token.MINUS);   }
+
+<YYINITIAL>"*"   { return new Token(Token.MULT);   }
+
+<YYINITIAL>"/"   { return new Token(Token.DIV);   }
+
+<YYINITIAL>"%"   { return new Token(Token.MOD);   }
+
+<YYINITIAL>"^"   { return new Token(Token.EXP);   }
+
+
 <YYINITIAL>"("   { return new Token(Token.LPAREN);   }
 
 <YYINITIAL>")"  { return new Token(Token.RPAREN);   }
 
-<YYINITIAL>{SEMI}   { return new Token(Token.SEMI);   }
+<YYINITIAL>"~"   { return new Token(Token.UNARY);   }
 
-<YYINITIAL>{DIGITOS}+   { return new Token(Token.NUMBER, yytext());   }
+<YYINITIAL>{DIGITOS}+({PUNTO}?{DIGITOS}*)?({EXPONENTE}{SIGNO}?{DIGITOS}+)?  { return new Token(Token.NUMBER, yytext());   }
 
-<YYINITIAL>[+]   { return new Token(Token.PLUS);   }
-
-<YYINITIAL>[-]   { return new Token(Token.MINUS);   }
-
-<YYINITIAL>[*]   { return new Token(Token.MULT);   }
-
-<YYINITIAL>[/]   { return new Token(Token.DIV);   }
-
-<YYINITIAL>[^]   { return new Token(Token.EXP);   }
-
-<YYINITIAL>[%]   { return new Token(Token.MOD);   }
-
-
-<YYINITIAL>[~]   { return new Token(Token.UNARY);   }
-
-<YYINITIAL>{WHITE}  { /* NO HACER NADA */             }
 
 <YYINITIAL>.        { return new Token(Token.ERROR);
                       /* todo lo demas es ERROR */ }

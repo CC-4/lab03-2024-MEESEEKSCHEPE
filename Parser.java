@@ -134,8 +134,155 @@ public class Parser {
     }
 
     private boolean E() {
+        int save = this.next;
+
+        this.next = save;
+        if( E1() ) { return true;}
+
+        this.next = save;
+        if( E2() ) { return true;}
+
+        this.next = save;
+        if( E3() ) { return true;}
+
         return false;
     }
 
     /* TODO: sus otras funciones aqui */
+
+    private boolean E1() {
+        //E + T
+        return E() && term(Token.PLUS) && T();
+
+    }
+
+    private boolean E2() {
+        //E - T
+        return E() && term(Token.MINUS) && T();
+        
+    }
+
+    private boolean E3() {
+        //T
+        return T();
+        
+    }
+
+    private boolean T() {
+        int save = this.next;
+
+        this.next = save;
+        if( T1() ) { return true;}
+
+        this.next = save;
+        if( T2() ) { return true;}
+
+        this.next = save;
+        if( T3() ) { return true;}
+
+        this.next = save;
+        if( T4() ) { return true;}
+
+        return false;
+    }
+
+
+    private boolean T1() {
+        //T * F
+        return T() && term(Token.MULT) && F();
+
+    }
+
+    private boolean T2() {
+        //T / F
+        return T() && term(Token.DIV) && F();
+        
+    }
+
+    private boolean T3() {
+        //T % F
+        return T() && term(Token.MOD) && F();
+        
+    }
+
+
+    private boolean T4() {
+        //F
+        return F();
+        
+    }
+
+    private boolean F() {
+        int save = this.next;
+
+        this.next = save;
+        if( F1() ) { return true;}
+
+        this.next = save;
+        if( F2() ) { return true;}
+
+        return false;
+    }
+
+
+    private boolean F1() {
+        //F ^ G
+        return F() && term(Token.EXP) && G();
+
+    }
+
+    private boolean F2() {
+        //G
+        return G();
+        
+    }
+
+    private boolean G() {
+        int save = this.next;
+
+        this.next = save;
+        if( G1() ) { return true;}
+
+        this.next = save;
+        if( G2() ) { return true;}
+
+        return false;
+    }
+
+
+    private boolean G1() {
+        // ~G
+        return term(Token.UNARY) && G();
+
+    }
+
+    private boolean G2() {
+        //P
+        return P();
+    }
+
+    private boolean P() {
+        int save = this.next;
+
+        this.next = save;
+        if( P1() ) { return true;}
+
+        this.next = save;
+        if( P2() ) { return true;}
+
+        return false;
+    }
+
+
+    private boolean P1() {
+        // ( E )
+        return term(Token.LPAREN) && E() &&  term(Token.RPAREN);
+
+    }
+
+    private boolean P2() {
+        return term(Token.NUMBER);
+    }
+
+
 }

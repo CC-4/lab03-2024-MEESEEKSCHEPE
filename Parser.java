@@ -134,155 +134,53 @@ public class Parser {
     }
 
     private boolean E() {
-        int save = this.next;
-
-        this.next = save;
-        if( E1() ) { return true;}
-
-        this.next = save;
-        if( E2() ) { return true;}
-
-        this.next = save;
-        if( E3() ) { return true;}
-
-        return false;
-    }
-
-    /* TODO: sus otras funciones aqui */
-
-    private boolean E1() {
-        //E + T
-        return E() && term(Token.PLUS) && T();
-
-    }
-
-    private boolean E2() {
-        //E - T
-        return E() && term(Token.MINUS) && T();
-        
-    }
-
-    private boolean E3() {
-        //T
-        return T();
-        
+        if (!T()) return false;
+        while (this.next < this.tokens.size() && (this.tokens.get(this.next).getId() == Token.PLUS || this.tokens.get(this.next).getId() == Token.MINUS)) {
+            int op = this.tokens.get(this.next).getId();
+            this.next++;
+            if (!T()) return false;
+            // Aquí se debe realizar la operación aritmética basada en el operador
+        }
+        return true;
     }
 
     private boolean T() {
-        int save = this.next;
-
-        this.next = save;
-        if( T1() ) { return true;}
-
-        this.next = save;
-        if( T2() ) { return true;}
-
-        this.next = save;
-        if( T3() ) { return true;}
-
-        this.next = save;
-        if( T4() ) { return true;}
-
-        return false;
-    }
-
-
-    private boolean T1() {
-        //T * F
-        return T() && term(Token.MULT) && F();
-
-    }
-
-    private boolean T2() {
-        //T / F
-        return T() && term(Token.DIV) && F();
-        
-    }
-
-    private boolean T3() {
-        //T % F
-        return T() && term(Token.MOD) && F();
-        
-    }
-
-
-    private boolean T4() {
-        //F
-        return F();
-        
+        if (!F()) return false;
+        while (this.next < this.tokens.size() && (this.tokens.get(this.next).getId() == Token.MULT || this.tokens.get(this.next).getId() == Token.DIV || this.tokens.get(this.next).getId() == Token.MOD)) {
+            int op = this.tokens.get(this.next).getId();
+            this.next++;
+            if (!F()) return false;
+            // Aquí se debe realizar la operación aritmética basada en el operador
+        }
+        return true;
     }
 
     private boolean F() {
-        int save = this.next;
-
-        this.next = save;
-        if( F1() ) { return true;}
-
-        this.next = save;
-        if( F2() ) { return true;}
-
-        return false;
-    }
-
-
-    private boolean F1() {
-        //F ^ G
-        return F() && term(Token.EXP) && G();
-
-    }
-
-    private boolean F2() {
-        //G
-        return G();
-        
+        if (!G()) return false;
+        while (this.next < this.tokens.size() && this.tokens.get(this.next).getId() == Token.EXP) {
+            this.next++;
+            if (!G()) return false;
+            // Aquí se debe realizar la operación aritmética basada en el operador
+        }
+        return true;
     }
 
     private boolean G() {
-        int save = this.next;
-
-        this.next = save;
-        if( G1() ) { return true;}
-
-        this.next = save;
-        if( G2() ) { return true;}
-
-        return false;
-    }
-
-
-    private boolean G1() {
-        // ~G
-        return term(Token.UNARY) && G();
-
-    }
-
-    private boolean G2() {
-        //P
-        return P();
+        if (term(Token.UNARY)) {
+            return G();
+        } else {
+            return P();
+        }
     }
 
     private boolean P() {
-        int save = this.next;
-
-        this.next = save;
-        if( P1() ) { return true;}
-
-        this.next = save;
-        if( P2() ) { return true;}
-
-        return false;
+        if (term(Token.LPAREN)) {
+            if (!E()) return false;
+            return term(Token.RPAREN);
+        } else {
+            return term(Token.NUMBER);
+        }
     }
-
-
-    private boolean P1() {
-        // ( E )
-        return term(Token.LPAREN) && E() &&  term(Token.RPAREN);
-
-    }
-
-    private boolean P2() {
-        return term(Token.NUMBER);
-    }
-
-
 }
+
+
